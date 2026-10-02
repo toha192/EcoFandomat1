@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EcoFandomat</title>
+<style>
+:root{--bg:#f3f8f4;--card:#fff;--tx:#12301f;--mu:#5d7a69;--pr:#1f9d55;--pr2:#0e6b3a;--bd:#d6e6db;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1a12;--card:#15281c;--tx:#e6f4ea;--mu:#8fb09c;--pr:#3ccf7a;--pr2:#2aa860;--bd:#244533}}
+:root[data-theme="dark"]{--bg:#0d1a12;--card:#15281c;--tx:#e6f4ea;--mu:#8fb09c;--pr:#3ccf7a;--pr2:#2aa860;--bd:#244533}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;display:flex;justify-content:center}
+#app{width:100%;max-width:420px;padding:20px;display:flex;flex-direction:column;min-height:100vh}
+h1{margin:0;font-size:26px}h2{margin:0 0 6px}
+.mu{color:var(--mu)}.c{text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:18px}
+.btn{width:100%;border:0;border-radius:14px;padding:15px;font-size:16px;font-weight:600;background:var(--pr);color:#fff;cursor:pointer;margin-top:14px}
+.btn.sec{background:transparent;color:var(--pr);border:1.5px solid var(--pr)}
+.logo{font-size:44px}
+.qrbox{margin:22px auto;width:230px;height:230px;border:2px dashed var(--pr);border-radius:20px;display:grid;place-items:center;font-size:90px;color:var(--pr);background:#fff;padding:14px;cursor:pointer}
+.qrbox svg{width:100%;height:100%;display:block}
+.viewf{position:relative;margin:20px auto;width:250px;height:250px;background:#0a0f0c;border-radius:20px;overflow:hidden}
+.viewf .fr{position:absolute;inset:36px;border:3px solid #3ccf7a;border-radius:14px}
+.viewf .ln{position:absolute;left:36px;right:36px;height:3px;background:#3ccf7a;box-shadow:0 0 12px #3ccf7a;animation:sc 1.6s ease-in-out infinite}
+@keyframes sc{0%,100%{top:40px}50%{top:206px}}
+.chip{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--bd);border-radius:12px;margin-top:8px;cursor:pointer;background:var(--card);color:var(--tx);width:100%;font-size:14px;text-align:left}
+.chip.on{border-color:var(--pr);background:rgba(31,157,85,.12)}
+.ok{font-size:56px;color:var(--pr)}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}
+.on-dot{color:var(--pr)}
+.stat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.stat .card{padding:14px}.stat b{font-size:24px;display:block}
+.bottle{font-size:70px;animation:drop 1.2s ease-in-out infinite}
+@keyframes drop{0%,100%{transform:translateY(-8px)}50%{transform:translateY(8px)}}
+.sp{flex:1}
+.addr{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:8px 14px;font-size:13px;color:var(--mu);margin-bottom:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prof{display:flex;gap:12px;align-items:center}.av{width:52px;height:52px;border-radius:50%;background:var(--pr);color:#fff;display:grid;place-items:center;font-size:22px;font-weight:700;flex:none}
+.kaspi{border-color:#f14635}.kl{display:inline-block;background:#f14635;color:#fff;font-weight:700;border-radius:8px;padding:3px 10px;margin-bottom:6px}
+.spin{width:28px;height:28px;border:3px solid var(--bd);border-top-color:#f14635;border-radius:50%;margin:0 auto 8px;animation:rot .8s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
+.bar{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin-top:14px}.bar i{display:block;height:100%;width:0;background:var(--pr);transition:width 1.8s linear}
+
+.card{margin-top:14px}.row{gap:12px}.row b{text-align:right}.prof h2{overflow-wrap:anywhere}
+label{display:block;font-size:14px;font-weight:600;margin-top:16px}
+input,select{display:block;width:100%;min-width:0;padding:13px;margin-top:7px;border:1px solid var(--bd);border-radius:12px;background:var(--card);color:var(--tx);font:inherit;font-size:16px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--pr);outline-offset:3px}
+.btn:disabled{opacity:.55;cursor:wait}.mode{display:flex;gap:10px}.mode .chip{justify-content:center}
+.demo{font-size:12px;text-align:center;color:var(--mu)}.error{color:#b42318;font-size:14px}.history-row{padding:12px 0;border-bottom:1px solid var(--bd);overflow-wrap:anywhere}.history-row:last-child{border:0}.history-row .row{border:0}.small{font-size:12px;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+function qrSvg(text){try{var q=qrcode(0,'M');q.addData('ecofandomat://machine/'+text);q.make();return q.createSvgTag({cellSize:4,margin:0,scalable:true})}catch(e){return '<span class="mu" style="font-size:16px">QR unavailable<br>Use the demo scan button</span>'}}
+const MACHINES={'ECOF-001':{id:'#001',place:'Astana Mall'},'ECOF-002':{id:'#002',place:'Mega Silk Way'},'ECOF-003':{id:'#003',place:'University Campus'}};
+const PRICE={bottle:30,can:80},NAME={bottle:'Plastic bottle',can:'Aluminum can'},ICON={bottle:'🍾',can:'🥫'},BANKS=['Kaspi','Halyk','Freedom'];
+const STORE='ecofandomat-demo-v2';
+let saved={};try{saved=JSON.parse(localStorage.getItem(STORE)||'{}')||{}}catch(e){}
+const S={screen:'login',qr:'ECOF-001',type:'bottle',mode:'single',n:{bottle:0,can:0},hist:Array.isArray(saved.hist)?saved.hist.filter(e=>Number.isSafeInteger(e.b)&&e.b>=0&&Number.isSafeInteger(e.c)&&e.c>=0&&BANKS.includes(e.bank)):[],user:{name:typeof saved.user?.name==='string'?saved.user.name.slice(0,50):'',bank:BANKS.includes(saved.user?.bank)?saved.user.bank:'Kaspi',last4:/^\d{4}$/.test(saved.user?.last4||'')?saved.user.last4:''},batch:null,payout:null,profileReturn:'dash',storageError:false};
+let timer=null;const app=document.getElementById('app');
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function save(){try{localStorage.setItem(STORE,JSON.stringify({user:S.user,hist:S.hist}));S.storageError=false}catch(e){S.storageError=true}}
+function m(){return MACHINES[S.qr]}
+function earned(){return S.n.bottle*30+S.n.can*80}
+function count(){return S.n.bottle+S.n.can}
+function total(){return S.hist.reduce((a,e)=>({items:a.items+e.b+e.c,money:a.money+e.b*30+e.c*80}),{items:0,money:0})}
+function go(s){clearTimeout(timer);timer=null;S.screen=s;render();window.scrollTo(0,0)}
+function button(label,action,secondary=false,disabled=false){return `<button class="btn ${secondary?'sec':''}" onclick="${action}" ${disabled?'disabled':''}>${label}</button>`}
+function header(title,sub,icon='♻️'){return `<div class="c"><div class="logo">${icon}</div><h2>${title}</h2><p class="mu">${sub}</p></div>`}
+function summary(b=S.n.bottle,c=S.n.can){return `<div class="card"><div class="row"><span>🍾 Bottles × ${b}</span><b>${b*30} ₸</b></div><div class="row"><span>🥫 Cans × ${c}</span><b>${c*80} ₸</b></div><div class="row"><b>Session reward</b><b class="on-dot">${b*30+c*80} ₸</b></div></div>`}
+function note(){return '<p class="demo">Demo prototype · No real transfers</p>'}
+function profileReady(){return !!S.user.name.trim()&&/^\d{4}$/.test(S.user.last4)}
+function editProfile(back){S.profileReturn=back;go('profile')}
+function saveProfile(ev){ev.preventDefault();const f=ev.target,name=f.elements.name.value.trim(),bank=f.elements.bank.value,last4=f.elements.last4.value.trim();if(!name||name.length>50||!BANKS.includes(bank)||!/^\d{4}$/.test(last4)){document.getElementById('form-error').textContent='Enter your name and exactly four card digits.';return}S.user={name,bank,last4};save();go(S.profileReturn)}
+function selectMachine(id){if(MACHINES[id]){S.qr=id;render()}}
+function startSession(){if(!profileReady()){editProfile('dash');return}S.n={bottle:0,can:0};S.payout=null;go('insert')}
+function setMode(mode){S.mode=mode;render()}
+function selectType(type){S.type=type;render()}
+function beginScan(b,c){if(!Number.isInteger(b)||!Number.isInteger(c)||b<0||c<0||b+c<1||b+c>50)return;S.batch={queue:[...Array(b).fill('bottle'),...Array(c).fill('can')],done:0,b,c};go('scanning');scheduleItem()}
+function beginSingle(){beginScan(S.type==='bottle'?1:0,S.type==='can'?1:0)}
+function beginBatch(ev){ev.preventDefault();const b=Number(ev.target.elements.bottles.value),c=Number(ev.target.elements.cans.value);if(!Number.isInteger(b)||!Number.isInteger(c)||b<0||c<0||b+c<1||b+c>50){document.getElementById('batch-error').textContent='Choose 1–50 items in total.';return}beginScan(b,c)}
+function scheduleItem(){timer=setTimeout(()=>{if(S.screen!=='scanning'||!S.batch)return;const batch=S.batch;S.n[batch.queue[batch.done]]++;batch.done++;if(batch.done===batch.queue.length){S.batch=null;go('accepted')}else{render();scheduleItem()}},650)}
+function cancelScan(){clearTimeout(timer);S.batch=null;go(count()?'accepted':'insert')}
+function leaveSession(){if(count()){go('accepted')}else go('dash')}
+function reviewReward(){if(!count())return;go('confirm')}
+function confirmPayment(){if(S.screen!=='confirm'||!count()||S.payout?.status==='sending')return;if(!profileReady()){editProfile('confirm');return}S.payout={id:'EF-'+Date.now()+'-'+Math.random().toString(36).slice(2,6),b:S.n.bottle,c:S.n.can,amount:earned(),bank:S.user.bank,last4:S.user.last4,place:m().place,status:'sending'};go('sending');timer=setTimeout(()=>{const p=S.payout;if(!p||p.status!=='sending')return;p.status='completed';S.hist.unshift({...p,time:new Date().toISOString()});S.n={bottle:0,can:0};save();go('reward')},1500)}
+function historyRow(e){return `<div class="history-row"><b>${esc(new Date(e.time).toLocaleString())} · ${esc(e.place)}</b><div class="row"><span>🍾 × ${e.b} · 🥫 × ${e.c}</span><b class="on-dot">+${e.b*30+e.c*80} ₸</b></div><span class="mu">Demo sent to ${esc(e.bank)} •••• ${esc(e.last4)}</span></div>`}
+function render(){let h='';const warning=S.storageError?'<p role="status" class="error">Browser storage is unavailable. Changes will last only while this page stays open.</p>':'';
+switch(S.screen){
+case 'login':h=header('EcoFandomat','Recycle bottles and cans. See your reward.')+note()+`<div class="qrbox">${qrSvg(S.qr)}</div><p class="c mu">Choose your machine for the demo</p>`+Object.keys(MACHINES).map(k=>`<button class="chip ${S.qr===k?'on':''}" onclick="selectMachine('${k}')">▦ <span><b>${MACHINES[k].id}</b> · ${MACHINES[k].place}</span></button>`).join('')+button('Scan QR Code (demo)',"go('scan')")+button(S.user.name?'Edit my profile':'Create my profile',"editProfile('login')",true);break;
+case 'scan':h=header('Scan QR Code','This demo simulates camera scanning.')+'<div class="viewf"><div class="fr"></div><div class="ln"></div></div><p class="c">Scanning…</p>'+button('Cancel',"go('login')",true);timer=setTimeout(()=>go('verified'),1600);break;
+case 'verified':h=header('Machine selected','Demo QR verification','✓')+`<div class="card"><div class="row"><span>Machine</span><b>${m().id}</b></div><div class="row"><span>Place</span><b>${m().place}</b></div></div>`+button('Continue',profileReady()?"go('dash')":"editProfile('dash')");break;
+case 'profile':h=header('My profile','Choose where your demo reward will go.')+`<form onsubmit="saveProfile(event)"><label>Your name<input name="name" autocomplete="name" maxlength="50" required value="${esc(S.user.name)}" placeholder="Enter your name"></label><label>Bank<select name="bank">${BANKS.map(b=>`<option ${b===S.user.bank?'selected':''}>${b}</option>`).join('')}</select></label><label>Demo card · last 4 digits<input name="last4" inputmode="numeric" autocomplete="off" maxlength="4" pattern="[0-9]{4}" required value="${esc(S.user.last4)}" placeholder="1234"></label><p class="mu">Use any four sample digits. This is a demo payment destination.</p><p id="form-error" class="error" role="alert"></p><button class="btn" type="submit">Save profile</button></form>`+button('Back',`go('${S.profileReturn}')`,true)+warning;break;
+case 'dash':{const tt=total();h=`<div class="prof"><div class="av">${esc(S.user.name.slice(0,1)||'?')}</div><div><h2>${esc(S.user.name||'Your profile')}</h2><span class="mu">${m().place} · ${m().id}</span></div></div>`+note()+button('Start Recycling','startSession()')+`<div class="stat"><div class="card"><b>${tt.money} ₸</b><span class="mu">Total demo rewards sent</span></div><div class="card"><b>${tt.items}</b><span class="mu">Items recycled</span></div></div><p class="mu">Each session is sent after you confirm. This total is history, not a balance waiting to be withdrawn.</p><div class="card"><b>Payment destination</b><p>${esc(S.user.bank)} •••• ${esc(S.user.last4||'----')}</p>${button('Edit profile and bank',"editProfile('dash')",true)}</div><div class="card"><b>Rewards per item</b><div class="row"><span>🍾 Plastic bottle</span><b>30 ₸</b></div><div class="row"><span>🥫 Aluminum can</span><b>80 ₸</b></div></div>`+button('Recycling and payout history',"go('history')",true)+button('Disconnect from machine',"go('login')",true)+warning;break}
+case 'insert':h=header('Recycle items','Choose one item or scan a whole batch.')+`<div class="mode" role="group" aria-label="Recycling mode"><button class="chip ${S.mode==='single'?'on':''}" onclick="setMode('single')">One item</button><button class="chip ${S.mode==='batch'?'on':''}" onclick="setMode('batch')">Batch mode</button></div>`;
+if(S.mode==='single'){h+=['bottle','can'].map(t=>`<button class="chip ${S.type===t?'on':''}" onclick="selectType('${t}')">${ICON[t]} ${NAME[t]} · ${PRICE[t]} ₸</button>`).join('')+'<p class="mu">Place the item into the machine, then start the demo check.</p>'+button('Item inserted · scan (demo)','beginSingle()')}else{h+=`<form onsubmit="beginBatch(event)"><div class="stat"><label>Bottles · 30 ₸ each<input name="bottles" type="number" min="0" max="50" step="1" required value="2"></label><label>Cans · 80 ₸ each<input name="cans" type="number" min="0" max="50" step="1" required value="1"></label></div><p class="mu">Add up to 50 items. The demo checks and counts each item automatically, so you do not need to repeat the same clicks.</p><p id="batch-error" class="error" role="alert"></p><button class="btn" type="submit">Scan batch (demo)</button></form>`}if(count())h+=summary();h+=button(count()?'Back to accepted items':'Cancel','leaveSession()',true);break;
+case 'scanning':{const b=S.batch,n=b.queue.length,pct=Math.round(b.done/n*100);h=header('Checking items',`Accepted ${b.done} of ${n} items`,'🔍')+`<div class="bar"><i style="width:${pct}%"></i></div><p class="c" role="status">Next: ${NAME[b.queue[b.done]]}</p>`+summary()+'<p class="mu">Demo detection. In the full machine, each item needs sensor validation.</p>'+button('Stop checking','cancelScan()',true);break}
+case 'accepted':h=header('Items accepted',`${count()} item(s) counted. Review your reward when you are ready.`,'✓')+summary()+button('Finish and review reward','reviewReward()')+button('Add more items',"go('insert')",true);break;
+case 'confirm':h=header('Confirm your reward','Check the amount and payment destination.')+summary()+`<div class="card"><b>Send to</b><p>${esc(S.user.name)}<br>${esc(S.user.bank)} •••• ${esc(S.user.last4)}</p>${button('Change profile or bank',"editProfile('confirm')",true)}</div>`+note()+button('Confirm and send reward','confirmPayment()',false,!count())+button('Back · keep recycling',"go('accepted')",true);break;
+case 'sending':h=header('Sending demo reward',`To ${esc(S.payout.bank)} •••• ${esc(S.payout.last4)}`)+`<div class="card c"><div class="spin"></div><b>${S.payout.amount} ₸</b><p role="status">Please wait…</p></div>`+note()+button('Sending…','',false,true);break;
+case 'reward':{const p=S.payout;h=header('Demo reward sent','No real money was transferred.','✓')+summary(p.b,p.c)+`<div class="card"><div class="row"><span>Bank</span><b>${esc(p.bank)}</b></div><div class="row"><span>Demo card</span><b>•••• ${esc(p.last4)}</b></div><div class="row"><span>Status</span><b class="on-dot">Demo completed</b></div><p class="mu small">Reference: ${esc(p.id)}</p></div>`+button('Back to Dashboard',"go('dash')")+button('View payout history',"go('history')",true)+warning;break}
+case 'history':h=header('Recycling and payout history','Completed demo rewards, with their destinations.')+(S.hist.length?`<div class="card">${S.hist.map(historyRow).join('')}</div>`:'<div class="card c"><p>No sessions yet.</p><p class="mu">Finish recycling and confirm your reward to add an entry.</p></div>')+button('Back to Dashboard',"go('dash')");break;
+}app.innerHTML=h;}
+render();
+
+</script>
+</body>
+</html>
